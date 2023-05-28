@@ -1,6 +1,6 @@
-// Connect LO+ to PD7 pin
-#define LO_MINUS PD6
 // Connect LO- to PD6 pin
+#define LO_MINUS PD6
+// Connect LO+ to PD7 pin
 #define LO_PLUS PD7
 // Connect output to A0 pin
 #define OUTPUT_ECG A0
@@ -8,6 +8,7 @@
 // Flags for LO+ and LO- interrupts
 volatile bool flag_lo_m = 0;
 volatile bool flag_lo_p = 0;
+uint32_t tsLastReport;
 
 // Pin Change Interrupt 2
 ISR(PCINT2_vect) {
@@ -53,6 +54,8 @@ void readECG() {
 }
 
 void loop() {
-  readECG();
-  delay(19);
+  if (millis() - tsLastReport > 19) {
+    readECG();
+    tsLastReport = millis();  
+  }
 }
